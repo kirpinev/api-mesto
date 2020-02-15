@@ -1,0 +1,17 @@
+.user-info__place-button {
+  width: 150px;
+  height: 50px;
+  font-size: 30px;
+  position: absolute;
+  top: 16px;
+  right: 0;
+  background-color: black;
+  color: white;
+}
+
+@media screen and (max-width: 980px) {
+  .user-info__place-button {
+    position: static;
+    margin-bottom: 40px;
+  }
+}
