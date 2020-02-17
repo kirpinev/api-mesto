@@ -4,8 +4,8 @@
   "description": "Backend for mesto project",
   "main": "app.js",
   "scripts": {
-    "start": "PORT=3000 node app.js",
-    "dev": "PORT=3000 nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
