@@ -1,7 +1,20 @@
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
 const router = require('express').Router();
+const {
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard
+} = require('../controllers/cards');
 
-const cards = require('../data/cards.json');
+router.get('/', getCards);
 
-router.get('/', (req, res) => res.json(cards));
+router.post('/', createCard);
+
+router.delete('/:id', deleteCard);
+router.delete('/:id/likes', dislikeCard);
+
+router.put('/:id/likes', likeCard);
 
 module.exports = router;
