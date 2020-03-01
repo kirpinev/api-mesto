@@ -44,7 +44,7 @@ module.exports.updateUser = (req, res) => {
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id пользователя невалидный' });
+    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
   }
 };
 
@@ -64,6 +64,6 @@ module.exports.updateUserAvatar = (req, res) => {
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id пользователя невалидный' });
+    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
   }
 };
