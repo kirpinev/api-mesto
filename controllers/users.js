@@ -10,13 +10,15 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   if (ObjectId.isValid(req.params.id)) {
     User.findById(req.params.id)
-      .orFail(Error('id пользователя не найден'))
+      .orFail(() => new Error('id пользователя не найден'))
       .then(user => {
         res.send({ data: user });
       })
       .catch(err => res.status(404).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
+    res
+      .status(400)
+      .send({ message: 'id пользователя не соответсвует стандарту' });
   }
 };
 
@@ -44,7 +46,9 @@ module.exports.updateUser = (req, res) => {
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
+    res
+      .status(400)
+      .send({ message: 'id пользователя не соответсвует стандарту' });
   }
 };
 
@@ -64,6 +68,8 @@ module.exports.updateUserAvatar = (req, res) => {
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
+    res
+      .status(400)
+      .send({ message: 'id пользователя не соответсвует стандарту' });
   }
 };

@@ -19,14 +19,14 @@ module.exports.createCard = (req, res) => {
   } else {
     res
       .status(400)
-      .send({ message: 'id пользователя не соответсвует стандарту' });
+      .send({ message: 'id пользователя не соответствует стандарту' });
   }
 };
 
 module.exports.deleteCard = (req, res) => {
   if (ObjectId.isValid(req.params.id)) {
     Card.findByIdAndDelete(req.params.id)
-      .orFail(Error('нет карточки с таким id'))
+      .orFail(() => new Error('нет карточки с таким id'))
       .then(card => {
         res.send({ data: card });
       })
@@ -48,12 +48,11 @@ module.exports.likeCard = (req, res) => {
       },
       { new: true }
     )
-      .orFail(Error('нет карточки с таким id'))
-      .then(card => res.send({ data: card }));
+      .orFail(() => new Error('нет карточки с таким id'))
+      .then(card => res.send({ data: card }))
+      .catch(err => res.status(404).send({ message: err.message }));
   } else {
-    res
-      .status(400)
-      .send({ message: 'id карточки не соответсвует стандарту' });
+    res.status(400).send({ message: 'id карточки не соответствует стандарту' });
   }
 };
 
@@ -69,14 +68,12 @@ module.exports.dislikeCard = (req, res) => {
       },
       { new: true }
     )
-      .orFail(Error('нет карточки с таким id'))
+      .orFail(() => new Error('нет карточки с таким id'))
       .then(card => {
         res.send({ data: card });
       })
       .catch(err => res.status(404).send({ message: err.message }));
   } else {
-    res
-      .status(400)
-      .send({ message: 'id карточки не соответсвует стандарту' });
+    res.status(400).send({ message: 'id карточки не соответствует стандарту' });
   }
 };
