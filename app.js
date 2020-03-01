@@ -6,9 +6,7 @@ const bodyParser = require('body-parser');
 const logger = require('./middlewares/logger');
 const userId = require('./middlewares/userId');
 
-const users = require('./routes/users');
-const cards = require('./routes/cards');
-const error = require('./routes/error');
+const routers = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -24,9 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(logger);
 app.use(userId);
-app.use('/users', users);
-app.use('/cards', cards);
-app.use(error);
+app.use(routers);
 
 app.listen(PORT, () => {
   console.log(chalk.blue.bold.inverse(`Слушаем порт ${PORT}`));

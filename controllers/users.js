@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -7,51 +8,62 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.id)
-    .then(user => res.send({ data: user }))
-    .catch(() =>
-      res.status(404).send({ message: 'Нет пользователя с таким id' })
-    );
+  if (ObjectId.isValid(req.params.id)) {
+    User.findById(req.params.id)
+      .orFail(Error('id пользователя не найден'))
+      .then(user => {
+        res.send({ data: user });
+      })
+      .catch(err => res.status(404).send({ message: err.message }));
+  } else {
+    res.status(400).send({ message: 'id пользователя не соответсвует стандарту' });
+  }
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .then(user => res.status(201).send({ data: user }))
+    .catch(err => res.status(400).send({ message: err.message }));
 };
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(
-    userId,
-    { name, about },
-    {
-      new: true,
-      runValidators: true,
-      upsert: true
-    }
-  )
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(userId)) {
+    User.findByIdAndUpdate(
+      userId,
+      { name, about },
+      {
+        new: true,
+        runValidators: true
+      }
+    )
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(400).send({ message: err.message }));
+  } else {
+    res.status(400).send({ message: 'id пользователя невалидный' });
+  }
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(
-    userId,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-      upsert: true
-    }
-  )
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(userId)) {
+    User.findByIdAndUpdate(
+      userId,
+      { avatar },
+      {
+        new: true,
+        runValidators: true
+      }
+    )
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(400).send({ message: err.message }));
+  } else {
+    res.status(400).send({ message: 'id пользователя невалидный' });
+  }
 };

@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -11,43 +12,71 @@ module.exports.createCard = (req, res) => {
   const { name, link, likes } = req.body;
   const userId = req.user._id;
 
-  Card.create({ name, link, owner: userId, likes })
-    .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(userId)) {
+    Card.create({ name, link, owner: userId, likes })
+      .then(card => res.status(201).send({ data: card }))
+      .catch(err => res.status(400).send({ message: err.message }));
+  } else {
+    res
+      .status(400)
+      .send({ message: 'id пользователя не соответсвует стандарту' });
+  }
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(req.params.id)) {
+    Card.findByIdAndDelete(req.params.id)
+      .orFail(Error('нет карточки с таким id'))
+      .then(card => {
+        res.send({ data: card });
+      })
+      .catch(err => res.status(404).send({ message: err.message }));
+  } else {
+    res.status(400).send({ message: 'id карточки не соответсвует стандарту' });
+  }
 };
 
 module.exports.likeCard = (req, res) => {
   const cardId = req.params.id;
-  const user = req.user._id;
+  const userId = req.user._id;
 
-  Card.findByIdAndUpdate(
-    cardId,
-    {
-      $addToSet: { likes: user }
-    },
-    { new: true }
-  )
-    .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(cardId)) {
+    Card.findByIdAndUpdate(
+      cardId,
+      {
+        $addToSet: { likes: userId }
+      },
+      { new: true }
+    )
+      .orFail(Error('нет карточки с таким id'))
+      .then(card => res.send({ data: card }));
+  } else {
+    res
+      .status(400)
+      .send({ message: 'id карточки не соответсвует стандарту' });
+  }
 };
 
 module.exports.dislikeCard = (req, res) => {
   const cardId = req.params.id;
-  const user = req.user._id;
+  const userId = req.user._id;
 
-  Card.findByIdAndUpdate(
-    cardId,
-    {
-      $pull: { likes: user }
-    },
-    { new: true }
-  )
-    .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+  if (ObjectId.isValid(cardId)) {
+    Card.findByIdAndUpdate(
+      cardId,
+      {
+        $pull: { likes: userId }
+      },
+      { new: true }
+    )
+      .orFail(Error('нет карточки с таким id'))
+      .then(card => {
+        res.send({ data: card });
+      })
+      .catch(err => res.status(404).send({ message: err.message }));
+  } else {
+    res
+      .status(400)
+      .send({ message: 'id карточки не соответсвует стандарту' });
+  }
 };
