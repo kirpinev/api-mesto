@@ -1,5 +1,32 @@
+require('dotenv').config();
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const escape = require('escape-html');
 const User = require('../models/user');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then(user => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret-key'
+      );
+
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: true
+        })
+        .end();
+    })
+    .catch(err => res.status(401).send({ message: err.message }));
+};
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -8,8 +35,10 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  if (ObjectId.isValid(req.params.id)) {
-    User.findById(req.params.id)
+  const { id: userCardId } = req.params;
+
+  if (ObjectId.isValid(userCardId)) {
+    User.findById(userCardId)
       .orFail(() => new Error('id пользователя не найден'))
       .then(user => {
         res.send({ data: user });
@@ -23,21 +52,30 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { email, password, name, about, avatar } = req.body;
 
-  User.create({ name, about, avatar })
-    .then(user => res.status(201).send({ data: user }))
-    .catch(err => res.status(400).send({ message: err.message }));
+  bcrypt.hash(password, 10).then(hash => {
+    User.create({
+      email,
+      password: `${hash}`,
+      name: escape(name),
+      about: escape(about),
+      avatar: escape(avatar)
+    })
+      .then(user => res.status(201).send({ data: user }))
+      .catch(err => res.status(400).send({ message: err.message }));
+  });
 };
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  const userId = req.user._id;
+  const { _id: userId } = req.user;
+  const { id: userCardId } = req.params;
 
-  if (ObjectId.isValid(userId)) {
+  if (ObjectId.isValid(userId) && userId === userCardId) {
     User.findByIdAndUpdate(
       userId,
-      { name, about },
+      { name: escape(name), about: escape(about) },
       {
         new: true,
         runValidators: true
@@ -45,7 +83,9 @@ module.exports.updateUser = (req, res) => {
     )
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
-  } else {
+  } else if (userId !== userCardId) {
+    res.status(401).send({ message: 'Нужна авторизация' });
+  } else if (!ObjectId.isValid(userId)) {
     res
       .status(400)
       .send({ message: 'id пользователя не соответсвует стандарту' });
@@ -54,12 +94,13 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  const userId = req.user._id;
+  const { _id: userId } = req.user;
+  const { id: userCardId } = req.params;
 
-  if (ObjectId.isValid(userId)) {
+  if (ObjectId.isValid(userId) && userId === userCardId) {
     User.findByIdAndUpdate(
       userId,
-      { avatar },
+      { avatar: escape(avatar) },
       {
         new: true,
         runValidators: true
@@ -67,7 +108,9 @@ module.exports.updateUserAvatar = (req, res) => {
     )
       .then(user => res.send({ data: user }))
       .catch(err => res.status(400).send({ message: err.message }));
-  } else {
+  } else if (userId !== userCardId) {
+    res.status(401).send({ message: 'Нужна авторизация' });
+  } else if (!ObjectId.isValid(userId)) {
     res
       .status(400)
       .send({ message: 'id пользователя не соответсвует стандарту' });

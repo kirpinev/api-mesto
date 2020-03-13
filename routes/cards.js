@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { auth } = require('../middlewares/auth');
 const {
   getCards,
   createCard,
@@ -6,6 +7,8 @@ const {
   likeCard,
   dislikeCard
 } = require('../controllers/cards');
+
+router.use(auth);
 
 router.get('/', getCards);
 

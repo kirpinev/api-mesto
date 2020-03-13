@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb');
+const escape = require('escape-html');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -10,10 +11,10 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link, likes } = req.body;
-  const userId = req.user._id;
+  const { _id: userId } = req.user;
 
   if (ObjectId.isValid(userId)) {
-    Card.create({ name, link, owner: userId, likes })
+    Card.create({ name: escape(name), link, owner: userId, likes })
       .then(card => res.status(201).send({ data: card }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
@@ -24,21 +25,30 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
+  const { _id: userId } = req.user;
+
   if (ObjectId.isValid(req.params.id)) {
-    Card.findByIdAndDelete(req.params.id)
+    Card.findById(req.params.id)
       .orFail(() => new Error('нет карточки с таким id'))
       .then(card => {
-        res.send({ data: card });
+        if (card.owner._id === userId) {
+          return res.status(401).send({ message: 'Нужна авторизация' });
+        }
+        return Card.findByIdAndDelete(req.params.id)
+          .then(cardById => {
+            res.send({ data: cardById });
+          })
+          .catch(err => res.status(404).send({ message: err.message }));
       })
       .catch(err => res.status(404).send({ message: err.message }));
   } else {
-    res.status(400).send({ message: 'id карточки не соответсвует стандарту' });
+    res.status(400).send({ message: 'id карточки не соответствует стандарту' });
   }
 };
 
 module.exports.likeCard = (req, res) => {
-  const cardId = req.params.id;
-  const userId = req.user._id;
+  const { id: cardId } = req.params;
+  const { _id: userId } = req.user;
 
   if (ObjectId.isValid(cardId)) {
     Card.findByIdAndUpdate(
@@ -57,8 +67,8 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  const cardId = req.params.id;
-  const userId = req.user._id;
+  const { id: cardId } = req.params;
+  const { _id: userId } = req.user;
 
   if (ObjectId.isValid(cardId)) {
     Card.findByIdAndUpdate(
