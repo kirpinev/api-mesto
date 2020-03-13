@@ -53,7 +53,17 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { email, password, name, about, avatar } = req.body;
 
-  bcrypt.hash(password, 10).then(hash => {
+  if (!password) {
+    return res.status(400).send({ message: 'Поле пароля непередано' });
+  }
+
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .send({ message: 'Длина пароля должна быть минимум 8 символов' });
+  }
+
+  return bcrypt.hash(password, 10).then(hash => {
     User.create({
       email,
       password: `${hash}`,
