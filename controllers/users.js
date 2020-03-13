@@ -16,13 +16,13 @@ module.exports.login = (req, res) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'secret-key'
       );
 
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-          sameSite: true
-        })
-        .end();
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true
+      });
+
+      res.status(200).send({ message: 'Вход успешно выполнен' });
     })
     .catch(err => res.status(401).send({ message: err.message }));
 };
