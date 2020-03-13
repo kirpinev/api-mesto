@@ -62,7 +62,16 @@ module.exports.createUser = (req, res) => {
       about: escape(about),
       avatar: escape(avatar)
     })
-      .then(user => res.status(201).send({ data: user }))
+      .then(user =>
+        res.status(201).send({
+          data: {
+            email: user.email,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar
+          }
+        })
+      )
       .catch(err => res.status(400).send({ message: err.message }));
   });
 };
