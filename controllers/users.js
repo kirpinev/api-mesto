@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
