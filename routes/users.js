@@ -4,13 +4,11 @@ const { auth } = require('../middlewares/auth');
 const {
   getUsers,
   getUserById,
-  createUser,
   updateUser,
   updateUserAvatar,
   login
 } = require('../controllers/users');
 
-router.post('/signup', createUser);
 router.post('/signin', login);
 
 router.use(auth);
