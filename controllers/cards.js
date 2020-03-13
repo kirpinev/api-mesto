@@ -10,11 +10,11 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-  const { name, link, likes } = req.body;
+  const { name, link } = req.body;
   const { _id: userId } = req.user;
 
   if (ObjectId.isValid(userId)) {
-    Card.create({ name: escape(name), link, owner: userId, likes })
+    Card.create({ name: escape(name), link, owner: userId })
       .then(card => res.status(201).send({ data: card }))
       .catch(err => res.status(400).send({ message: err.message }));
   } else {
