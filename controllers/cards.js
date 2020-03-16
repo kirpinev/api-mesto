@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res) => {
     Card.findById(req.params.id)
       .orFail(() => new Error('нет карточки с таким id'))
       .then(card => {
-        if (card.owner._id !== userId) {
+        if (card.owner._id.toString() !== userId) {
           return res.status(401).send({ message: 'Нужна авторизация' });
         }
         return Card.findByIdAndDelete(req.params.id)
