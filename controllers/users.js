@@ -7,6 +7,12 @@ const { createToken } = require('../utils/token');
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
+  if (email === undefined || password === undefined) {
+    return res
+      .status(400)
+      .send({ message: 'Необходимо передать оба поля email и password' });
+  }
+
   return User.findUserByCredentials(email, password)
     .then(user => {
       const token = createToken(user);
@@ -48,7 +54,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { email, password, name, about, avatar } = req.body;
 
-  if (!password) {
+  if (password === undefined) {
     return res.status(400).send({ message: 'Поле пароля непередано' });
   }
 

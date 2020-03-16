@@ -5,11 +5,8 @@ const {
   getUsers,
   getUserById,
   updateUser,
-  updateUserAvatar,
-  login
+  updateUserAvatar
 } = require('../controllers/users');
-
-router.post('/signin', login);
 
 router.use(auth);
 
