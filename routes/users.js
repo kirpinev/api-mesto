@@ -1,19 +1,28 @@
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 const router = require('express').Router();
+const { auth } = require('../middlewares/auth');
 const {
   getUsers,
   getUserById,
-  createUser,
   updateUser,
   updateUserAvatar
 } = require('../controllers/users');
 
+const {
+  verifyUserObjectIdAndCompareWithCardId,
+  verifyUserObjectId
+} = require('../middlewares/objectId');
+
+router.use(auth);
+
 router.get('/', getUsers);
-router.get('/:id', getUserById);
+router.get('/:id', verifyUserObjectId, getUserById);
 
-router.post('/', createUser);
-
-router.patch('/:id', updateUser);
-router.patch('/:id/avatar', updateUserAvatar);
+router.patch('/:id', verifyUserObjectIdAndCompareWithCardId, updateUser);
+router.patch(
+  '/:id/avatar',
+  verifyUserObjectIdAndCompareWithCardId,
+  updateUserAvatar
+);
 
 module.exports = router;
