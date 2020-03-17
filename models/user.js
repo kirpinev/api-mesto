@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true
+    required:[true, "Длина имени должна быть от 2 до 30 символов"]
   },
   about: {
     type: String,

@@ -5,15 +5,7 @@ const User = require('../models/user');
 const { createToken } = require('../utils/token');
 
 module.exports.login = (req, res) => {
-  const { email, password } = req.body;
-
-  if (email === undefined || password === undefined) {
-    return res
-      .status(400)
-      .send({ message: 'Необходимо передать оба поля email и password' });
-  }
-
-  return User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(req.body.email, req.body.password)
     .then(user => {
       const token = createToken(user);
 
@@ -35,20 +27,12 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  const { id: userCardId } = req.params;
-
-  if (ObjectId.isValid(userCardId)) {
-    User.findById(userCardId)
-      .orFail(() => new Error('id пользователя не найден'))
-      .then(user => {
-        res.send({ data: user });
-      })
-      .catch(err => res.status(404).send({ message: err.message }));
-  } else {
-    res
-      .status(400)
-      .send({ message: 'id пользователя не соответсвует стандарту' });
-  }
+  User.findById(req.params.id)
+    .orFail(() => new Error('id пользователя не найден'))
+    .then(user => {
+      res.send({ data: user });
+    })
+    .catch(err => res.status(404).send({ message: err.message }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -87,51 +71,27 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  const { name, about } = req.body;
-  const { _id: userId } = req.user;
-  const { id: userCardId } = req.params;
-
-  if (ObjectId.isValid(userId) && userId === userCardId) {
-    User.findByIdAndUpdate(
-      userId,
-      { name: escape(name), about: escape(about) },
-      {
-        new: true,
-        runValidators: true
-      }
-    )
-      .then(user => res.send({ data: user }))
-      .catch(err => res.status(400).send({ message: err.message }));
-  } else if (userId !== userCardId) {
-    res.status(401).send({ message: 'Нужна авторизация' });
-  } else if (!ObjectId.isValid(userId)) {
-    res
-      .status(400)
-      .send({ message: 'id пользователя не соответсвует стандарту' });
-  }
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name: escape(req.body.name), about: escape(req.body.about) },
+    {
+      new: true,
+      runValidators: true
+    }
+  )
+    .then(user => res.send({ data: user }))
+    .catch(err => res.status(400).send({ message: err.message }));
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  const { avatar } = req.body;
-  const { _id: userId } = req.user;
-  const { id: userCardId } = req.params;
-
-  if (ObjectId.isValid(userId) && userId === userCardId) {
-    User.findByIdAndUpdate(
-      userId,
-      { avatar: escape(avatar) },
-      {
-        new: true,
-        runValidators: true
-      }
-    )
-      .then(user => res.send({ data: user }))
-      .catch(err => res.status(400).send({ message: err.message }));
-  } else if (userId !== userCardId) {
-    res.status(401).send({ message: 'Нужна авторизация' });
-  } else if (!ObjectId.isValid(userId)) {
-    res
-      .status(400)
-      .send({ message: 'id пользователя не соответсвует стандарту' });
-  }
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: escape(req.body.avatar) },
+    {
+      new: true,
+      runValidators: true
+    }
+  )
+    .then(user => res.send({ data: user }))
+    .catch(err => res.status(400).send({ message: err.message }));
 };
