@@ -1,8 +1,8 @@
-const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const escape = require('escape-html');
 const User = require('../models/user');
 const { createToken } = require('../utils/token');
+const { messages } = require('../utils/messages');
 
 module.exports.login = (req, res) => {
   return User.findUserByCredentials(req.body.email, req.body.password)
@@ -15,7 +15,7 @@ module.exports.login = (req, res) => {
         sameSite: true
       });
 
-      res.status(200).send({ message: 'Вход успешно выполнен' });
+      res.status(200).send({ message: messages.authorization.isSuccessful });
     })
     .catch(err => res.status(401).send({ message: err.message }));
 };
@@ -28,7 +28,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
-    .orFail(() => new Error('id пользователя не найден'))
+    .orFail(() => new Error(messages.user.id.isNotFound))
     .then(user => {
       res.send({ data: user });
     })

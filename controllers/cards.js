@@ -1,9 +1,10 @@
 const escape = require('escape-html');
 const Card = require('../models/card');
+const { messages } = require('../utils/messages');
 
 const verifyCardAndSend = (card, res) => {
   if (!card) {
-    return Promise.reject(new Error('нет карточки с таким id'));
+    return Promise.reject(new Error(messages.card.id.isNotFound));
   }
 
   return res.send({ data: card });
@@ -28,10 +29,12 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.id)
-    .orFail(() => new Error('нет карточки с таким id'))
+    .orFail(() => new Error(messages.card.id.isNotFound))
     .then(card => {
       if (card.owner._id.toString() !== req.user._id) {
-        return res.status(401).send({ message: 'Нужна авторизация' });
+        return res
+          .status(401)
+          .send({ message: messages.authorization.isRequired });
       }
       return Card.findByIdAndDelete(req.params.id)
         .then(cardById => {
