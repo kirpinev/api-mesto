@@ -58,8 +58,14 @@ module.exports.likeCard = (req, res) => {
       },
       { new: true }
     )
-      .orFail(() => new Error('нет карточки с таким id'))
-      .then(card => res.send({ data: card }))
+      // .orFail(() => new Error('нет карточки с таким id'))
+      .then(card => {
+        if (!card) {
+          return Promise.reject(new Error('нет карточки с таким id'));
+        }
+
+        return res.send({ data: card });
+      })
       .catch(err => res.status(404).send({ message: err.message }));
   } else {
     res.status(400).send({ message: 'id карточки не соответствует стандарту' });
@@ -78,9 +84,13 @@ module.exports.dislikeCard = (req, res) => {
       },
       { new: true }
     )
-      .orFail(() => new Error('нет карточки с таким id'))
+      // .orFail(() => new Error('нет карточки с таким id'))
       .then(card => {
-        res.send({ data: card });
+        if (!card) {
+          return Promise.reject(new Error('нет карточки с таким id'));
+        }
+
+        return res.send({ data: card });
       })
       .catch(err => res.status(404).send({ message: err.message }));
   } else {
