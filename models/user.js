@@ -64,7 +64,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
 };
 
 userSchema.plugin(uniqueValidator, {
-  message: 'Почта должна быть уникальной.'
+  message: messages.registration.email.shouldBeUnique
 });
 
 module.exports = mongoose.model('user', userSchema);

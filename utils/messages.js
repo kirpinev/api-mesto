@@ -6,6 +6,9 @@ const messages = {
     },
     password: {
       tooShort: 'Длина пароля должна быть минимум 8 символов'
+    },
+    email: {
+      shouldBeUnique: 'Почта должна быть уникальной'
     }
   },
   authorization: {
