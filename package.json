@@ -37,7 +37,7 @@
     "escape-html": "^1.0.3",
     "express": "^4.17.1",
     "express-rate-limit": "^5.1.1",
-    "helmet": "^3.21.3",
+    "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.5",
