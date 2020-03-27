@@ -3,9 +3,10 @@ const escape = require('escape-html');
 const User = require('../models/user');
 const { createToken } = require('../utils/token');
 const { messages } = require('../utils/messages');
+const { NotFoundError, BadRequest } = require('../errors/index');
 
-module.exports.login = (req, res) => {
-  return User.findUserByCredentials(req.body.email, req.body.password)
+module.exports.login = (req, res, next) =>
+  User.findUserByCredentials(req.body.email, req.body.password)
     .then(user => {
       const token = createToken(user);
 
@@ -17,34 +18,29 @@ module.exports.login = (req, res) => {
 
       res.status(200).send({ message: messages.authorization.isSuccessful });
     })
-    .catch(err => res.status(401).send({ message: err.message }));
-};
+    .catch(next);
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) =>
   User.find({})
     .then(users => res.send({ data: users }))
-    .catch(err => res.status(500).send({ message: err.message }));
-};
+    .catch(next);
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) =>
   User.findById(req.params.id)
-    .orFail(() => new Error(messages.user.id.isNotFound))
+    .orFail(() => new NotFoundError(messages.user.id.isNotFound))
     .then(user => {
       res.send({ data: user });
     })
-    .catch(err => res.status(404).send({ message: err.message }));
-};
+    .catch(next);
 
-module.exports.createUser = (req, res) => {
-  const { email, password, name, about, avatar } = req.body;
-
-  return bcrypt.hash(password, 10).then(hash => {
+module.exports.createUser = (req, res, next) =>
+  bcrypt.hash(req.body.password, 10).then(hash =>
     User.create({
-      email,
+      email: req.body.email,
       password: `${hash}`,
-      name: escape(name),
-      about: escape(about),
-      avatar: escape(avatar)
+      name: escape(req.body.name),
+      about: escape(req.body.about),
+      avatar: escape(req.body.avatar)
     })
       .then(user =>
         res.status(201).send({
@@ -56,11 +52,10 @@ module.exports.createUser = (req, res) => {
           }
         })
       )
-      .catch(err => res.status(400).send({ message: err.message }));
-  });
-};
+      .catch(err => next(new BadRequest(err.message)))
+  );
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) =>
   User.findByIdAndUpdate(
     req.user._id,
     { name: escape(req.body.name), about: escape(req.body.about) },
@@ -70,10 +65,9 @@ module.exports.updateUser = (req, res) => {
     }
   )
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(400).send({ message: err.message }));
-};
+    .catch(err => next(new BadRequest(err.message)));
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) =>
   User.findByIdAndUpdate(
     req.user._id,
     { avatar: escape(req.body.avatar) },
@@ -83,5 +77,4 @@ module.exports.updateUserAvatar = (req, res) => {
     }
   )
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(400).send({ message: err.message }));
-};
+    .catch(err => next(new BadRequest(err.message)));
