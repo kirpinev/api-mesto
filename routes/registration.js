@@ -1,8 +1,9 @@
+const { celebrate } = require('celebrate');
 const router = require('express').Router();
 
 const { createUser } = require('../controllers/users');
-const { checkRegistrationFields } = require('../middlewares/field');
+const { registrationSchema } = require('../joi-shemas/index');
 
-router.post('/', checkRegistrationFields, createUser);
+router.post('/', celebrate({ body: registrationSchema }), createUser);
 
 module.exports = router;

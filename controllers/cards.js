@@ -1,7 +1,11 @@
 const escape = require('escape-html');
 const Card = require('../models/card');
 const { messages } = require('../utils/messages');
-const { BadRequestError, UnauthorizedError, NotFoundError } = require('../errors/index');
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError
+} = require('../errors/index');
 
 const verifyCardAndSend = (card, res) => {
   if (!card) {

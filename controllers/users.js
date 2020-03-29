@@ -3,7 +3,7 @@ const escape = require('escape-html');
 const User = require('../models/user');
 const { createToken } = require('../utils/token');
 const { messages } = require('../utils/messages');
-const { NotFoundError, BadRequest } = require('../errors/index');
+const { NotFoundError, BadRequestError } = require('../errors/index');
 
 module.exports.login = (req, res, next) =>
   User.findUserByCredentials(req.body.email, req.body.password)
@@ -52,7 +52,7 @@ module.exports.createUser = (req, res, next) =>
           }
         })
       )
-      .catch(err => next(new BadRequest(err.message)))
+      .catch(err => next(new BadRequestError(err.message)))
   );
 
 module.exports.updateUser = (req, res, next) =>
@@ -65,7 +65,7 @@ module.exports.updateUser = (req, res, next) =>
     }
   )
     .then(user => res.send({ data: user }))
-    .catch(err => next(new BadRequest(err.message)));
+    .catch(err => next(new BadRequestError(err.message)));
 
 module.exports.updateUserAvatar = (req, res, next) =>
   User.findByIdAndUpdate(
@@ -77,4 +77,4 @@ module.exports.updateUserAvatar = (req, res, next) =>
     }
   )
     .then(user => res.send({ data: user }))
-    .catch(err => next(new BadRequest(err.message)));
+    .catch(err => next(new BadRequestError(err.message)));
