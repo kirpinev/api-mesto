@@ -14,13 +14,6 @@ const error = require('./error');
 router.use(requestLogger);
 router.use(middlewares);
 
-// код для тестирования автоматического восстановления процесса
-router.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
 router.use('/signup', registration);
 router.use('/signin', authorization);
 router.use('/users', users);
