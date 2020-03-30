@@ -8,7 +8,10 @@ const {
   likeCard,
   dislikeCard
 } = require('../controllers/cards');
-const { verifyUserObjectId } = require('../middlewares/object-id');
+const {
+  verifyUserObjectId,
+  verifyCardObjectId
+} = require('../middlewares/object-id');
 const { objectIdSchema, cardSchema } = require('../joi-shemas/index');
 
 router.use(auth);
@@ -25,12 +28,14 @@ router.post(
 router.delete(
   '/:id',
   verifyUserObjectId,
+  verifyCardObjectId,
   celebrate({ params: objectIdSchema }),
   deleteCard
 );
 router.delete(
   '/:id/likes',
   verifyUserObjectId,
+  verifyCardObjectId,
   celebrate({ params: objectIdSchema }),
   dislikeCard
 );
@@ -38,6 +43,7 @@ router.delete(
 router.put(
   '/:id/likes',
   verifyUserObjectId,
+  verifyCardObjectId,
   celebrate({ params: objectIdSchema }),
   likeCard
 );
