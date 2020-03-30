@@ -26,6 +26,7 @@ const messages = {
     }
   },
   card: {
+    isDeleted: 'Карточка успешно удалена',
     id: {
       isNotFound: 'Нет карточки с таким id',
       isNotValid: 'Id карточки не соответствует стандарту'

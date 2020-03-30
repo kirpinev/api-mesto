@@ -1,12 +1,10 @@
 const router = require('express').Router();
 
-const limiter = require('../middlewares/limiter');
-const logger = require('../middlewares/logger');
-const helmet = require('../middlewares/helmet');
-const bodyParser = require('../middlewares/bodyParser');
-const cookieParser = require('../middlewares/cookieParser');
+const limiter = require('./limiter');
+const helmet = require('./helmet');
+const bodyParser = require('./body-parser');
+const cookieParser = require('./cookie-parser');
 
-router.use(logger);
 router.use(limiter);
 router.use(helmet);
 router.use(bodyParser);

@@ -1,51 +1,49 @@
 const escape = require('escape-html');
 const Card = require('../models/card');
 const { messages } = require('../utils/messages');
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError
+} = require('../errors/index');
 
 const verifyCardAndSend = (card, res) => {
   if (!card) {
-    return Promise.reject(new Error(messages.card.id.isNotFound));
+    throw new NotFoundError(messages.card.id.isNotFound);
   }
 
   return res.send({ data: card });
 };
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) =>
   Card.find({})
     .populate('owner')
     .then(cards => res.send({ data: cards }))
-    .catch(err => res.status(500).send({ message: err.message }));
-};
+    .catch(next);
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) =>
   Card.create({
     name: escape(req.body.name),
     link: req.body.link,
     owner: req.user._id
   })
     .then(card => res.status(201).send({ data: card }))
-    .catch(err => res.status(400).send({ message: err.message }));
-};
+    .catch(err => next(new BadRequestError(err.message)));
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) =>
   Card.findById(req.params.id)
-    .orFail(() => new Error(messages.card.id.isNotFound))
+    .orFail(() => new NotFoundError(messages.card.id.isNotFound))
     .then(card => {
       if (card.owner._id.toString() !== req.user._id) {
-        return res
-          .status(401)
-          .send({ message: messages.authorization.isRequired });
+        throw new UnauthorizedError(messages.authorization.isRequired);
       }
-      return Card.findByIdAndDelete(req.params.id)
-        .then(cardById => {
-          res.send({ data: cardById });
-        })
-        .catch(err => res.status(404).send({ message: err.message }));
+      return Card.deleteOne(card)
+        .then(() => res.send({ message: messages.card.isDeleted }))
+        .catch(next);
     })
-    .catch(err => res.status(404).send({ message: err.message }));
-};
+    .catch(next);
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.id,
     {
@@ -53,12 +51,11 @@ module.exports.likeCard = (req, res) => {
     },
     { new: true }
   )
-    // .orFail(() => new Error('нет карточки с таким id'))
-    .then(card => verifyCardAndSend(card, res))
-    .catch(err => res.status(404).send({ message: err.message }));
-};
 
-module.exports.dislikeCard = (req, res) => {
+    .then(card => verifyCardAndSend(card, res))
+    .catch(next);
+
+module.exports.dislikeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.id,
     {
@@ -66,7 +63,6 @@ module.exports.dislikeCard = (req, res) => {
     },
     { new: true }
   )
-    // .orFail(() => new Error('нет карточки с таким id'))
+
     .then(card => verifyCardAndSend(card, res))
-    .catch(err => res.status(404).send({ message: err.message }));
-};
+    .catch(next);
