@@ -37,8 +37,8 @@ module.exports.deleteCard = (req, res, next) =>
       if (card.owner._id.toString() !== req.user._id) {
         throw new UnauthorizedError(messages.authorization.isRequired);
       }
-      return Card.findByIdAndDelete(req.params.id)
-        .then(cardById => res.send({ data: cardById }))
+      return Card.deleteOne(card)
+        .then(() => res.send({ message: messages.card.isDeleted }))
         .catch(next);
     })
     .catch(next);
