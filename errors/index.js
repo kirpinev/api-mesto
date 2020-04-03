@@ -5,5 +5,5 @@ const UnauthorizedError = require('./unauthorized-error');
 module.exports = {
   BadRequestError,
   NotFoundError,
-  UnauthorizedError
+  UnauthorizedError,
 };

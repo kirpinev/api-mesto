@@ -6,11 +6,11 @@ const {
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
+  dislikeCard,
 } = require('../controllers/cards');
 const {
   verifyUserObjectId,
-  verifyCardObjectId
+  verifyCardObjectId,
 } = require('../middlewares/object-id');
 const { objectIdSchema, cardSchema } = require('../joi-shemas/index');
 
