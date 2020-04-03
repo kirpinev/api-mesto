@@ -5,10 +5,13 @@ const mongoose = require('mongoose');
 
 const routers = require('./routes/index');
 
-const { PORT = 3000 } = process.env;
+const {
+  PORT = 3000,
+  DATABASE_URL = 'mongodb://localhost:27017/mestodb'
+} = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false
