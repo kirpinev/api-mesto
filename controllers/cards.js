@@ -5,7 +5,7 @@ const {
   BadRequestError,
   UnauthorizedError,
   NotFoundError
-} = require('../errors/index');
+} = require('../errors');
 
 const verifyCardAndSend = (card, res) => {
   if (!card) {

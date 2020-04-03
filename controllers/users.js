@@ -3,7 +3,7 @@ const escape = require('escape-html');
 const User = require('../models/user');
 const { createToken } = require('../utils/token');
 const { messages } = require('../utils/messages');
-const { NotFoundError, BadRequestError } = require('../errors/index');
+const { NotFoundError, BadRequestError } = require('../errors');
 
 module.exports.login = (req, res, next) =>
   User.findUserByCredentials(req.body.email, req.body.password)
