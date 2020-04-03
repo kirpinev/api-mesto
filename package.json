@@ -22,8 +22,8 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-node": "^4.0.0",
     "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.2",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1"
@@ -42,7 +42,7 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.5",
-    "mongoose": "^5.9.6",
+    "mongoose": "^5.9.7",
     "mongoose-unique-validator": "^2.0.3",
     "validator": "^13.0.0",
     "winston": "^3.2.1"
