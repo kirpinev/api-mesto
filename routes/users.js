@@ -6,16 +6,16 @@ const {
   getUsers,
   getUserById,
   updateUser,
-  updateUserAvatar
+  updateUserAvatar,
 } = require('../controllers/users');
 const {
   compareUserObjectIdAndCardId,
-  verifyUserObjectId
+  verifyUserObjectId,
 } = require('../middlewares/object-id');
 const {
   objectIdSchema,
   userInfoSchema,
-  userAvatarSchema
+  userAvatarSchema,
 } = require('../joi-shemas/index');
 
 router.use(auth);
@@ -27,7 +27,7 @@ router.patch(
   '/:id',
   celebrate({
     params: objectIdSchema,
-    body: userInfoSchema
+    body: userInfoSchema,
   }),
   verifyUserObjectId,
   compareUserObjectIdAndCardId,
@@ -37,7 +37,7 @@ router.patch(
   '/:id/avatar',
   celebrate({
     params: objectIdSchema,
-    body: userAvatarSchema
+    body: userAvatarSchema,
   }),
   verifyUserObjectId,
   compareUserObjectIdAndCardId,

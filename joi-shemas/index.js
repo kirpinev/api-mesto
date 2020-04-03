@@ -10,12 +10,12 @@ const registrationSchema = Joi.object().keys({
   password: passwordSchema,
   name: textSchema,
   about: textSchema,
-  avatar: linkSchema
+  avatar: linkSchema,
 });
 
 const loginSchema = Joi.object().keys({
   email: emailSchema,
-  password: passwordSchema
+  password: passwordSchema,
 });
 
 const objectIdSchema = Joi.object().keys({ id: objectId });
@@ -24,7 +24,7 @@ const userAvatarSchema = Joi.object().keys({ avatar: linkSchema });
 
 const userInfoSchema = Joi.object().keys({
   name: textSchema,
-  about: textSchema
+  about: textSchema,
 });
 
 const cardSchema = Joi.object().keys({ name: textSchema, link: linkSchema });
@@ -35,5 +35,5 @@ module.exports = {
   cardSchema,
   userInfoSchema,
   userAvatarSchema,
-  objectIdSchema
+  objectIdSchema,
 };

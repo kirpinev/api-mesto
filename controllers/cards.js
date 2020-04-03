@@ -4,7 +4,7 @@ const { messages } = require('../utils/messages');
 const {
   BadRequestError,
   UnauthorizedError,
-  NotFoundError
+  NotFoundError,
 } = require('../errors');
 
 const verifyCardAndSend = (card, res) => {
@@ -18,22 +18,22 @@ const verifyCardAndSend = (card, res) => {
 module.exports.getCards = (req, res, next) =>
   Card.find({})
     .populate('owner')
-    .then(cards => res.send({ data: cards }))
+    .then((cards) => res.send({ data: cards }))
     .catch(next);
 
 module.exports.createCard = (req, res, next) =>
   Card.create({
     name: escape(req.body.name),
     link: req.body.link,
-    owner: req.user._id
+    owner: req.user._id,
   })
-    .then(card => res.status(201).send({ data: card }))
-    .catch(err => next(new BadRequestError(err.message)));
+    .then((card) => res.status(201).send({ data: card }))
+    .catch((err) => next(new BadRequestError(err.message)));
 
 module.exports.deleteCard = (req, res, next) =>
   Card.findById(req.params.id)
     .orFail(() => new NotFoundError(messages.card.id.isNotFound))
-    .then(card => {
+    .then((card) => {
       if (card.owner._id.toString() !== req.user._id) {
         throw new UnauthorizedError(messages.authorization.isRequired);
       }
@@ -47,22 +47,22 @@ module.exports.likeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.id,
     {
-      $addToSet: { likes: req.user._id }
+      $addToSet: { likes: req.user._id },
     },
     { new: true }
   )
 
-    .then(card => verifyCardAndSend(card, res))
+    .then((card) => verifyCardAndSend(card, res))
     .catch(next);
 
 module.exports.dislikeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.id,
     {
-      $pull: { likes: req.user._id }
+      $pull: { likes: req.user._id },
     },
     { new: true }
   )
 
-    .then(card => verifyCardAndSend(card, res))
+    .then((card) => verifyCardAndSend(card, res))
     .catch(next);
