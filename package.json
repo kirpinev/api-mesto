@@ -41,8 +41,8 @@
     "express-winston": "^4.0.5",
     "helmet": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.6.0",
-    "mongoose": "^5.10.1",
+    "mongodb": "^3.6.1",
+    "mongoose": "^5.10.2",
     "mongoose-unique-validator": "^2.0.3",
     "validator": "^13.1.1",
     "winston": "^3.3.3"
