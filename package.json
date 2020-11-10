@@ -19,7 +19,7 @@
   "homepage": "https://github.com/kirpinev/backend-mesto#readme",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.22.1",
@@ -31,7 +31,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "celebrate": "^13.0.3",
+    "celebrate": "^13.0.4",
     "chalk": "^4.1.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
@@ -41,8 +41,8 @@
     "express-winston": "^4.0.5",
     "helmet": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.6.2",
-    "mongoose": "^5.10.12",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.10.13",
     "mongoose-unique-validator": "^2.0.3",
     "validator": "^13.1.17",
     "winston": "^3.3.3"
