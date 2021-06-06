@@ -39,7 +39,7 @@
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
     "express-winston": "^4.0.5",
-    "helmet": "^4.4.1",
+    "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.9",
     "mongoose": "^5.12.12",
