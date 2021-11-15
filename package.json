@@ -42,8 +42,8 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
-    "mongoose": "^5.13.13",
-    "mongoose-unique-validator": "^2.0.3",
+    "mongoose": "^6.0.12",
+    "mongoose-unique-validator": "^3.0.0",
     "validator": "^13.7.0",
     "winston": "^3.3.3"
   }
