@@ -34,7 +34,7 @@
     "celebrate": "^15.0.0",
     "chalk": "^5.0.0",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^14.2.0",
+    "dotenv": "^14.3.2",
     "escape-html": "^1.0.3",
     "express": "^4.17.2",
     "express-rate-limit": "^6.1.0",
